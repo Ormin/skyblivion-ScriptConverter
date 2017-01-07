@@ -240,7 +240,7 @@ class ESMAnalyzer
             $tryAgainst = preg_replace("#_#", "", $scriptName);
 
             if (!isset($this->scriptTypes[$tryAgainst])) {
-                throw new ConversionException("Script " . $scriptName . " not found in ESM - cannot find its script type.");
+                throw new ConversionException("Script {$scriptName} not found in ESM - cannot find its script type.");
             }
 
             return $this->scriptTypes[$tryAgainst];
@@ -263,9 +263,9 @@ class ESMAnalyzer
 
 
             if ( //three preg matches are for performance reasons - much better than grouping
-                preg_match("#REFR................EDID..(?i)" . $attachedName . "(?-i)\x{00}NAME..(....)#s", $this->esm, $refrFormidMatches) ||
-                preg_match("#ACRE................EDID..(?i)" . $attachedName . "(?-i)\x{00}NAME..(....)#s", $this->esm, $acreFormidMatches) ||
-                preg_match("#ACHR................EDID..(?i)" . $attachedName . "(?-i)\x{00}NAME..(....)#s", $this->esm, $achrFormidMatches)
+                preg_match("#REFR................EDID..(?i){$attachedName}(?-i)\x{00}NAME..(....)#s", $this->esm, $refrFormidMatches) ||
+                preg_match("#ACRE................EDID..(?i){$attachedName}(?-i)\x{00}NAME..(....)#s", $this->esm, $acreFormidMatches) ||
+                preg_match("#ACHR................EDID..(?i){$attachedName}(?-i)\x{00}NAME..(....)#s", $this->esm, $achrFormidMatches)
             ) {
 
                 if(!empty($refrFormidMatches)) {
@@ -295,9 +295,9 @@ class ESMAnalyzer
                 }
 
                 if($searchedFormType != "NPC_") {
-                    preg_match("#".$searchedFormType."........" . $targetFormidString . ".*?SCRI..(....)#s", $this->esm, $matches);
+                    preg_match("#".$searchedFormType."........{$targetFormidString}.*?SCRI..(....)#s", $this->esm, $matches);
                 } else {
-                    if (preg_match("#NPC_(....)...." . $targetFormidString . "#s", $this->esm, $failoverMatches, PREG_OFFSET_CAPTURE)) {
+                    if (preg_match("#NPC_(....)....{$targetFormidString}#s", $this->esm, $failoverMatches, PREG_OFFSET_CAPTURE)) {
                         $baseDataOffset = $failoverMatches[0][1] + 24;
                         $dataLengthMatch = $failoverMatches[1][0];
                         $dataLength = 0;
@@ -315,12 +315,12 @@ class ESMAnalyzer
 
             } else {
                 //Just go with usual matching via EDID
-                preg_match("#EDID..(?i)" . $attachedName . "(?-i)\x{00}.*?SCRI..(....)#s", $this->esm, $matches);
+                preg_match("#EDID..(?i){$attachedName}(?-i)\x{00}.*?SCRI..(....)#s", $this->esm, $matches);
 
             }
 
             if (empty($matches)) {
-                throw new ConversionException("Cannot resolve script type by searching its base form edid " . $attachedName);
+                throw new ConversionException("Cannot resolve script type by searching its base form edid {$attachedName}");
             }
 
             $hex = $matches[1];
@@ -336,10 +336,10 @@ class ESMAnalyzer
             }
 
 
-            preg_match("#SCPT........" . $hexString . "....EDID..([a-zA-Z0-9]+)#si", $this->esm, $dataMatches);
+            preg_match("#SCPT........{$hexString}....EDID..([a-zA-Z0-9]+)#si", $this->esm, $dataMatches);
 
             if (empty($dataMatches)) {
-                throw new ConversionException("For EDID " . $attachedName . " and script formid " . $hexFormid . " we couldn't find any scripts in ESM.");
+                throw new ConversionException("For EDID {$attachedName} and script formid {$hexFormid} we couldn't find any scripts in ESM.");
             }
 
             $customType = TES5TypeFactory::memberByValue($dataMatches[1]);
